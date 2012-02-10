@@ -17,7 +17,7 @@ class Supreme::APITest < Test::Unit::TestCase
   end
   
   def test_banklist_url
-    REST.stubs(:get).with(&@record_url)
+    REST.stubs(:get).with(&@record_url).returns(stub(:ok? => false))
     @api.send(:get, 'banklist')
     
     uri = URI.parse(@url)
@@ -44,9 +44,8 @@ class Supreme::APITest < Test::Unit::TestCase
   end
   
   def test_fetch_url
-    REST.stubs(:get).with(&@record_url)
-    @api.send(:get, 'fetch', @options)
-    
+    REST.stubs(:get).with(&@record_url).returns(stub(:ok? => false))
+    @api.fetch(@options)
     uri = URI.parse(@url)
     assert_equal 'https', uri.scheme
     assert_equal 'secure.mollie.nl', uri.host
@@ -60,8 +59,8 @@ class Supreme::APITest < Test::Unit::TestCase
       "bank_id" => "0031",
       "description" => "20 credits for your account",
       "partner_id" => "978234",
-      "return_url" => "http://example.com/payments/ad74hj23/thanks",
-      "report_url" => "http://example.com/payments/ad74hj23"
+      "returnurl" => "http://example.com/payments/ad74hj23/thanks",
+      "reporturl" => "http://example.com/payments/ad74hj23"
     }, parts)
   end
   

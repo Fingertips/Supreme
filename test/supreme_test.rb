@@ -16,6 +16,15 @@ class SupremeTest < Test::Unit::TestCase
     assert !Supreme.test?
   end
   
+  def test_translate_hash_keys
+    assert_equal({}, Supreme.translate_hash_keys({}, {}))
+    assert_equal({'a' => 1}, Supreme.translate_hash_keys({}, {'a' => 1}))
+    assert_equal({'a' => 1, 'b' => 2}, Supreme.translate_hash_keys({'baby' => 'b'}, {'a' => 1, 'baby' => 2}))
+    assert_equal({'a' => 1, 'b' => 2}, Supreme.translate_hash_keys({:baby => 'b'}, {'a' => 1, 'baby' => 2}))
+    assert_equal({'a' => 1, 'b' => 2}, Supreme.translate_hash_keys({'baby' => 'b'}, {'a' => 1, :baby => 2}))
+    assert_equal({'a' => 1, 'b' => 2}, Supreme.translate_hash_keys({:baby => 'b'}, {:a => 1, :baby => 2}))
+  end
+  
   def test_holds_a_partner_id
     Supreme.partner_id = '678234'
     assert_equal '678234', Supreme.partner_id

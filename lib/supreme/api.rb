@@ -23,7 +23,10 @@ module Supreme
     def fetch(options)
       options = options.dup
       options[:partner_id] ||= partner_id
-      response = get('fetch', options)
+      response = get('fetch', Supreme.translate_hash_keys({
+        :return_url => :returnurl,
+        :report_url => :reporturl
+      }, options))
       if response.ok?
         Supreme::Transaction.new(response.body)
       end

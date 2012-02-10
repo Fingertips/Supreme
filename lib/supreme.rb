@@ -19,6 +19,14 @@ module Supreme
     mode.to_sym == :test
   end
   
+  def self.translate_hash_keys(translation, hash)
+    translated = {}
+    hash.each do |key, value|
+      new_key = translation[key.to_sym] || translation[key.to_s] ||key
+      translated[new_key.to_s] = value
+    end; translated
+  end
+  
   # Returns an instance of the API with settings from the Supreme class accessors.
   #
   # If you need to handle multiple accounts in your application you will need to
