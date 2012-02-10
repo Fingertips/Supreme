@@ -6,4 +6,5 @@ require "bundler/setup"
 require "supreme"
 
 require "test/unit"
-require 'mocha'
+require "fakeweb"
+require "mocha"

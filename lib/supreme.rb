@@ -1,6 +1,7 @@
 require 'supreme/uri'
 require 'supreme/api'
 require 'supreme/version'
+require 'supreme/response'
 
 module Supreme
   class << self
@@ -12,6 +13,10 @@ module Supreme
     #
     # You can find this on the 'Accountgegevens' page.
     attr_accessor :partner_id
+  end
+  
+  def self.test?
+    mode.to_sym == :test
   end
   
   # Returns an instance of the API with settings from the Supreme class accessors.

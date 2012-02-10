@@ -5,22 +5,73 @@ class Supreme::APITest < Test::Unit::TestCase
     @api = Supreme::API.new(
       :partner_id => '000000'
     )
-  end
-  
-  def test_banklist
-    @api.stubs(:get).with('https://secure.mollie.nl/xml/ideal?a=banklist').returns(mock(:ok? => true, :body => BANKLIST_RESPONSE))
-    assert_equal [["ABN AMRO", "0031"], ["Postbank", "0721"], ["Rabobank", "0021"]], @api.banklist
-  end
-  
-  def test_fetch
-    @api.stubs(:get).returns(mock(:ok? => true, :body => BANKLIST_RESPONSE))
-    transaction = @api.fetch(
+    @record_url = proc { |url| @url = url }
+    @options = {
+      :partner_id => '978234',
       :bank_id => '0031',
       :amount => 1299,
       :description => '20 credits for your account',
       :report_url => 'http://example.com/payments/ad74hj23',
       :return_url => 'http://example.com/payments/ad74hj23/thanks'
-    )
+    }
+  end
+  
+  def test_banklist_url
+    REST.stubs(:get).with(&@record_url)
+    @api.send(:get, 'banklist')
+    
+    uri = URI.parse(@url)
+    assert_equal 'https', uri.scheme
+    assert_equal 'secure.mollie.nl', uri.host
+    assert_equal '/xml/ideal', uri.path
+    
+    parts = Hash[Supreme::URI.parse_query(uri.query)]
+    assert_equal({
+      'testmode' => 'true',
+      'a' => 'banklist'
+    }, parts)
+  end
+  
+  def test_banklist
+    FakeWeb.register_uri(:get, %r{^https://}, :body => BANKLIST_RESPONSE, :status => 200)
+    banklist = @api.banklist
+    assert banklist.kind_of?(Supreme::Banklist)
+    assert_equal [
+      {:name=>"ABN AMRO", :id=>"0031"},
+      {:name=>"Postbank", :id=>"0721"},
+      {:name=>"Rabobank", :id=>"0021"}
+    ], banklist.to_a
+  end
+  
+  def test_fetch_url
+    REST.stubs(:get).with(&@record_url)
+    @api.send(:get, 'fetch', @options)
+    
+    uri = URI.parse(@url)
+    assert_equal 'https', uri.scheme
+    assert_equal 'secure.mollie.nl', uri.host
+    assert_equal '/xml/ideal', uri.path
+    
+    parts = Hash[Supreme::URI.parse_query(uri.query)]
+    assert_equal({
+      "a" => "fetch",
+      "testmode" => "true",
+      "amount" => "1299",
+      "bank_id" => "0031",
+      "description" => "20 credits for your account",
+      "partner_id" => "978234",
+      "return_url" => "http://example.com/payments/ad74hj23/thanks",
+      "report_url" => "http://example.com/payments/ad74hj23"
+    }, parts)
+  end
+  
+  def test_fetch
+    FakeWeb.register_uri(:get, %r{^https://}, :body => FETCH_RESPONSE, :status => 200)
+    transaction = @api.fetch(@options)
+    assert transaction.kind_of?(Supreme::Transaction)
+    assert_equal '482d599bbcc7795727650330ad65fe9b', transaction.transaction_id
+    assert_equal '123', transaction.amount
+    assert_equal 'https://mijn.postbank.nl/internetbankieren/SesamLoginServlet?sessie=ideal&trxid=003123456789123&random=123456789abcdefgh', transaction.url
   end
 end
 
@@ -44,7 +95,7 @@ BANKLIST_RESPONSE = %(<?xml version="1.0"?>
 FETCH_RESPONSE = %(<?xml version="1.0"?>
 <response>
     <order>
-        <transaction_id>482d599bbcc7795727650330ad65fe9b </transaction_id>
+        <transaction_id>482d599bbcc7795727650330ad65fe9b</transaction_id>
         <amount>123</amount>
         <currency>EUR</currency>
         <URL>https://mijn.postbank.nl/internetbankieren/SesamLoginServlet?sessie=ideal&trxid=003123456789123&random=123456789abcdefgh</URL>
