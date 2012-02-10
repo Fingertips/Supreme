@@ -1,12 +1,18 @@
+require 'supreme/uri'
 require 'supreme/api'
 require 'supreme/version'
 
-class Supreme
+module Supreme
   class << self
-    # Holds either :test or :live to signal whether to run in test or live mode
+    # Holds either :test or :live to signal whether to run in test or live mode.
+    # The default value is :test.
     attr_accessor :mode
+    
+    # The partner / client ID given by Mollie.
+    #
+    # You can find this on the 'Accountgegevens' page.
+    attr_accessor :partner_id
   end
-  self.mode = :test
   
   # Returns an instance of the API with settings from the Supreme class accessors.
   #
@@ -15,4 +21,12 @@ class Supreme
   def self.api
     Supreme::API.new
   end
+  
+  # Resets the class back to the default settings
+  def self.reset!
+    self.mode = :test
+    self.partner_id = nil
+  end
+  
+  reset!
 end

@@ -1,8 +1,15 @@
 require 'rest'
 require 'nokogiri'
 
-class Supreme
+module Supreme
   class API
+    attr_accessor :partner_id
+    
+    def initialize(options={})
+      self.partner_id = options[:partner_id] || Supreme.partner_id
+    end
+    
+    # Returns a list of available banks
     def banklist
       response = get('https://secure.mollie.nl/xml/ideal?a=banklist')
       if response.ok?
@@ -14,6 +21,16 @@ class Supreme
         end
       end
     end
+    
+    # Fetches a new transaction
+    def fetch(options)
+      response = get("https://secure.mollie.nl/xml/ideal?a=fetch&#{Supreme::URI.generate_query(options)}")
+      if response.ok?
+        response.body
+      end
+    end
+    
+    private
     
     def get(url)
       REST.get(url)
