@@ -1,0 +1,9 @@
+requires!(options, :bank_id, :amount, :description, :report_url, :return_url)
+
+
+def requires!(options, *keys)
+  missing = keys - options.keys
+  unless missing.empty?
+    raise ArgumentError, "Missing required options: #{missing.map { |m| m.to_s }.join(', ')}"
+  end
+end

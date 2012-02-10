@@ -1,0 +1,3 @@
+Kicker::Growl.use = false
+
+recipe :ruby
