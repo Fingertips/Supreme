@@ -22,8 +22,19 @@ class Supreme::APITest < Test::Unit::TestCase
     }
   end
   
+  def test_generates_non_test_urls
+    REST.stubs(:get).with(&@record_url)
+    @api.mode = :live
+    @api.send(:get, 'banklist')
+    
+    parts = Hash[Supreme::URI.parse_query(URI.parse(@url).query)]
+    assert_equal({
+      'a' => 'banklist'
+    }, parts)
+  end
+  
   def test_banklist_url
-    REST.stubs(:get).with(&@record_url).returns(stub(:ok? => false))
+    REST.stubs(:get).with(&@record_url)
     @api.send(:get, 'banklist')
     
     uri = URI.parse(@url)
