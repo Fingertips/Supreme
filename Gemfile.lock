@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kicker (0.1.0)
+    supreme (0.1.0)
       nap
 
 GEM
@@ -22,7 +22,7 @@ PLATFORMS
 
 DEPENDENCIES
   fakeweb
-  kicker!
   mocha
   rake
   rdoc
+  supreme!
