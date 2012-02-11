@@ -3,7 +3,7 @@ $:.unshift File.expand_path('../lib', __FILE__)
 require 'supreme/version'
 
 Gem::Specification.new do |s|
-  s.name     = "kicker"
+  s.name     = "supreme"
   s.version  = Supreme::VERSION
   s.date     = Date.today
 
