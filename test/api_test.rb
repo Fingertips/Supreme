@@ -65,7 +65,7 @@ class Supreme::APITest < Test::Unit::TestCase
       "amount" => "1299",
       "bank_id" => "0031",
       "description" => "20 credits for your account",
-      "partner_id" => "978234",
+      "partnerid" => "978234",
       "returnurl" => "http://example.com/payments/ad74hj23/thanks",
       "reporturl" => "http://example.com/payments/ad74hj23"
     }, parts)
@@ -93,7 +93,7 @@ class Supreme::APITest < Test::Unit::TestCase
     assert_equal({
       "a" => "check",
       "testmode" => "true",
-      "partner_id" => "978234",
+      "partnerid" => "978234",
       "transaction_id" => "482d599bbcc7795727650330ad65fe9b"
     }, parts)
   end

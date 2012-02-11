@@ -85,6 +85,7 @@ module Supreme
       options = options.dup
       options[:partner_id] ||= partner_id
       response = get('fetch', Supreme.translate_hash_keys({
+        :partner_id => :partnerid,
         :return_url => :returnurl,
         :report_url => :reporturl
       }, options))
@@ -112,7 +113,9 @@ module Supreme
     def check(options)
       options = options.dup
       options[:partner_id] ||= partner_id
-      response = get('check', options)
+      response = get('check', Supreme.translate_hash_keys({
+        :partner_id => :partnerid,
+      }, options))
       log('Status response', response.body)
       Supreme::Response.for(response.body, Supreme::Status)
     end
