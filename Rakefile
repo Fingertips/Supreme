@@ -14,7 +14,8 @@ namespace :test do
   task :remote do
     # Run the tests in random order
     files = FileList['remote/**/*_test.rb']
-    sh "ruby -Ilib -I. -r '#{files.join("' -r '")}' -e ''"
+    env = ENV['DEBUG'] ? "env DEBUG=true " : ''
+    sh "#{env}ruby -Ilib -I. -r '#{files.join("' -r '")}' -e ''"
   end
 end
 

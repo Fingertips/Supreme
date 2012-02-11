@@ -37,6 +37,7 @@ module Supreme
     #   Supreme.api.banklist.to_a # => [{ :id => '1006', :name => 'ABN AMRO Bank' }, …]
     def banklist
       response = get('banklist')
+      log('Banklist response', response.body)
       if response.ok?
         Supreme::Banklist.new(response.body)
       end
@@ -85,6 +86,7 @@ module Supreme
         :return_url => :returnurl,
         :report_url => :reporturl
       }, options))
+      log('Fetch response', response.body)
       if response.ok?
         Supreme::Transaction.new(response.body)
       end
@@ -109,6 +111,7 @@ module Supreme
       options = options.dup
       options[:partner_id] ||= partner_id
       response = get('check', options)
+      log('Status response', response.body)
       if response.ok?
         Supreme::Status.new(response.body)
       end
@@ -131,7 +134,12 @@ module Supreme
       options[:a] = action
       url = endpoint
       url.query = query(options)
+      log('GET', url.to_s)
       REST.get(url.to_s)
+    end
+    
+    def log(thing, contents)
+      $stderr.write("\n#{thing}:\n\n#{contents}\n") if $DEBUG
     end
   end
 end

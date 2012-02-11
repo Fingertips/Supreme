@@ -7,6 +7,8 @@ require "supreme"
 
 require "test/unit"
 
+$DEBUG = !!ENV["DEBUG"]
+
 config_file = File.expand_path('../../config/test.yml', __FILE__)
 if File.exist?(config_file)
   require 'yaml'
@@ -16,5 +18,5 @@ if File.exist?(config_file)
   end
 else
   puts "[!] Please copy config/test.yml.example to config/test.yml and set your partner ID to run the remote tests."
-  exit -1
+  exit(-1)
 end
