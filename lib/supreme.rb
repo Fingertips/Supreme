@@ -1,3 +1,8 @@
+# Supreme is a Ruby for doing iDEAL transactions through the Mollie iDEAL API.
+# http://www.mollie.nl/betaaldiensten/ideal
+#
+# To get going read the documentation for Supreme and Supreme::API.
+
 require 'supreme/uri'
 require 'supreme/api'
 require 'supreme/version'
