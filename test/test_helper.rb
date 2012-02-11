@@ -8,3 +8,5 @@ require "supreme"
 require "test/unit"
 require "fakeweb"
 require "mocha"
+
+FakeWeb.allow_net_connect = false

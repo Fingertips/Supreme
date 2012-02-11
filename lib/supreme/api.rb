@@ -19,7 +19,7 @@ module Supreme
       end
     end
     
-    # Fetches a new transaction
+    # Creates a new payment transaction
     def fetch(options)
       options = options.dup
       options[:partner_id] ||= partner_id
@@ -29,6 +29,16 @@ module Supreme
       }, options))
       if response.ok?
         Supreme::Transaction.new(response.body)
+      end
+    end
+    
+    # Checks the status of the payment
+    def status(options)
+      options = options.dup
+      options[:partner_id] ||= partner_id
+      response = get('fetch', options)
+      if response.ok?
+        Supreme::Status.new(response.body)
       end
     end
     

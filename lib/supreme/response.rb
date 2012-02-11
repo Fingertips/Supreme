@@ -37,4 +37,30 @@ module Supreme
       text('//URL')
     end
   end
+  
+  class Status < Response
+    def transaction_id
+      text('//transaction_id')
+    end
+    
+    def amount
+      text('//amount')
+    end
+    
+    def currency
+      text('//currency')
+    end
+    
+    def paid
+      text('//payed')
+    end
+    
+    def customer
+      {
+        'name' => text('//consumerName'),
+        'account' => text('//consumerAccount'),
+        'city' => text('//consumerCity')
+      }
+    end
+  end
 end
