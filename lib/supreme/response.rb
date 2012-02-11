@@ -3,23 +3,37 @@ require 'rexml/document'
 module Supreme
   # The base class for all response classes.
   class Response
-    attr_accessor :response
+    attr_accessor :body
     
-    def initialize(response_body)
-      @response = REXML::Document.new(response_body).root
+    def initialize(body)
+      @body = body
+    end
+    
+    def error?
+      false
+    end
+    
+    # Return an instance of a reponse class based on the contents of the body
+    def self.for(response_body, klass)
+      body = REXML::Document.new(response_body).root
+      if body.elements["/response/item"]
+        ::Supreme::Error.new(body)
+      else
+        klass.new(body)
+      end
     end
     
     protected
     
     def text(path)
-      @response.get_text(path).to_s
+      @body.get_text(path).to_s
     end
   end
   
   # Response to a banklist request
   class Banklist < Response
     def to_a
-      @response.get_elements('//bank').map do |issuer|
+      @body.get_elements('//bank').map do |issuer|
         { :id => issuer.get_text('bank_id').to_s, :name => issuer.get_text('bank_name').to_s }
       end
     end
@@ -68,6 +82,21 @@ module Supreme
         'account' => text('//consumerAccount'),
         'city' => text('//consumerCity')
       }
+    end
+  end
+  
+  # Response was an error
+  class Error < Response
+    def error?
+      true
+    end
+    
+    def code
+      text('//errorcode')
+    end
+    
+    def message
+      text('//message')
     end
   end
 end

@@ -14,6 +14,7 @@ if File.exist?(config_file)
   require 'yaml'
   config = YAML.load_file(config_file)
   config.each do |key, value|
+    puts "Setting :#{key} to `#{value}'"
     Supreme.send("#{key}=", value)
   end
 else

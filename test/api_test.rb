@@ -47,10 +47,11 @@ class Supreme::APITest < Test::Unit::TestCase
       {:name=>"Postbank", :id=>"0721"},
       {:name=>"Rabobank", :id=>"0021"}
     ], banklist.to_a
+    assert !banklist.error?
   end
   
   def test_fetch_url
-    REST.stubs(:get).with(&@record_url).returns(stub(:ok? => false))
+    REST.stubs(:get).with(&@record_url).returns(stub(:body => '<?xml version="1.0"?><response></response>'))
     @api.fetch(@fetch_options)
     uri = URI.parse(@url)
     assert_equal 'https', uri.scheme
@@ -77,10 +78,11 @@ class Supreme::APITest < Test::Unit::TestCase
     assert_equal '482d599bbcc7795727650330ad65fe9b', transaction.transaction_id
     assert_equal '123', transaction.amount
     assert_equal 'https://mijn.postbank.nl/internetbankieren/SesamLoginServlet?sessie=ideal&trxid=003123456789123&random=123456789abcdefgh', transaction.url
+    assert !transaction.error?
   end
   
   def test_check_url
-    REST.stubs(:get).with(&@record_url).returns(stub(:ok? => false))
+    REST.stubs(:get).with(&@record_url).returns(stub(:body => '<?xml version="1.0"?><response></response>'))
     @api.check(@check_options)
     uri = URI.parse(@url)
     assert_equal 'https', uri.scheme
@@ -110,6 +112,7 @@ class Supreme::APITest < Test::Unit::TestCase
       'city' => 'Amsterdam'
     }, status.customer)
     assert status.paid?
+    assert !status.error?
   end
   
   def test_further_status_responses
@@ -117,6 +120,14 @@ class Supreme::APITest < Test::Unit::TestCase
     status = @api.check(@check_options)
     assert_equal '', status.paid
     assert !status.paid?
+  end
+  
+  def test_error_response
+    FakeWeb.register_uri(:get, %r{^https://}, :body => ERROR_RESPONSE, :status => 200)
+    error = @api.fetch(@fetch_options)
+    assert_equal '-2', error.code
+    assert_equal "A fetch was issued without specification of 'partnerid'.", error.message
+    assert error.error?
   end
 end
 
@@ -177,4 +188,12 @@ FURTHER_CHECK_RESPONSE = %(<?xml version="1.0"?>
         </consumer>
         <message>This iDEAL-order has successfuly been payed for, and this is the first time you check it.</message>
     </order>
+</response>)
+
+ERROR_RESPONSE = %(<?xml version="1.0" ?>
+<response>
+  <item type="error">
+    <errorcode>-2</errorcode>
+    <message>A fetch was issued without specification of 'partnerid'.</message>
+  </item>
 </response>)

@@ -17,8 +17,8 @@ module Supreme
   # multiple accounts in your application you will need to instantiate multiple API instances yourself.
   def self.api
     Supreme::API.new(
-      :mode => self.mode,
-      :partner_id => self.partner_id
+      :mode       => mode,
+      :partner_id => partner_id
     )
   end
   

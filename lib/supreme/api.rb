@@ -35,17 +35,19 @@ module Supreme
     # Use Banklist#to_a to get a list of hashes with actual information.
     #
     #   Supreme.api.banklist.to_a # => [{ :id => '1006', :name => 'ABN AMRO Bank' }, …]
+    #
+    # Returns a Supreme::Error when the call fails.
     def banklist
       response = get('banklist')
       log('Banklist response', response.body)
-      if response.ok?
-        Supreme::Banklist.new(response.body)
-      end
+      Supreme::Response.for(response.body, Supreme::Banklist)
     end
     
     # Starts a new payment by sending payment information. It also configures how the iDEAL
     # provider handles payment status information. It returns a Supreme::Transaction response
     # object.
+    #
+    # Returns a Supreme::Error when the call fails.
     #
     # === Options
     #
@@ -87,13 +89,13 @@ module Supreme
         :report_url => :reporturl
       }, options))
       log('Fetch response', response.body)
-      if response.ok?
-        Supreme::Transaction.new(response.body)
-      end
+      Supreme::Response.for(response.body, Supreme::Transaction)
     end
     
     # Requests the status information for a payment. It returns a Supreme::Status
     # response object.
+    #
+    # Returns a Supreme::Error when the call fails.
     #
     # === Options
     #
@@ -112,9 +114,7 @@ module Supreme
       options[:partner_id] ||= partner_id
       response = get('check', options)
       log('Status response', response.body)
-      if response.ok?
-        Supreme::Status.new(response.body)
-      end
+      Supreme::Response.for(response.body, Supreme::Status)
     end
     
     private
