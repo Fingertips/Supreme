@@ -23,14 +23,13 @@ with caching these values.
 
 When the user has selected a bank, you start a transaction.
 
-    transaction = Supreme.api.fetch({
-      :partner_id => '000000',
+    transaction = Supreme.api.fetch(
       :bank_id => '0031',
       :amount => 1299,
       :description => 'A fluffy bunny',
       :return_url => 'http://example.com/payments/as45re/thanks',
       :report_url => 'http://example.com/payments/as45re'
-    })
+    )
     transaction.transaction_id #=> '482d599bbcc7795727650330ad65fe9b'
 
 Keep the transaction_id around for reference and redirect the customer to the indicated URL.
@@ -40,16 +39,29 @@ Keep the transaction_id around for reference and redirect the customer to the in
 Once the transaction is done you will receive a GET on the report_url with a ‘transaction_id’ parameter
 to indicate that the transaction has changed state. You will need to check the status of the transaction.
   
-    status = Supreme.api.check({
-      :partner_id => '000000',
+    status = Supreme.api.check(
       :transaction_id => '482d599bbcc7795727650330ad65fe9b'
-    })
+    )
   
     # Note that the status will only be paid? after the first check, for each consecutive call
     # paid? will be false regardless of the outcome of the transaction.
-    if status.paid?
+    #
+    # We use success? and make sure we don't deliver the product more than once.
+    if status.success?
       # Update the local status of the payment
     end
 
 When the customer returns to your site it returns with its transaction_id attached to your provided URL.
 You can present a page depending on the status of the payment.
+
+## Errors
+
+When an error occurs you get a Supreme::Error object instead of the response object you expected.
+
+    status = Supreme.api.check(
+      :transaction_id => '482d599bbcc7795727650330ad65fe9b'
+    )
+    
+    if status.error?
+      log("#{status.message} (#{status.code})")
+    end
