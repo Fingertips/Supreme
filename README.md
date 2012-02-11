@@ -1,5 +1,7 @@
 A Ruby client that allows you to do iDEAL transactions through the [Mollie iDEAL API](http://www.mollie.nl/betaaldiensten/ideal).
 
+{<img src="https://secure.travis-ci.org/Fingertips/Supreme.png" />}[http://travis-ci.org/Fingertips/Supreme]
+
 ## Install
 
 $ gem install supreme
