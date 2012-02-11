@@ -5,8 +5,6 @@ require "bundler/setup"
 
 require "supreme"
 
-require "test/unit"
-
 $DEBUG = !!ENV["DEBUG"]
 
 config_file = File.expand_path('../../config/test.yml', __FILE__)
@@ -20,4 +18,17 @@ if File.exist?(config_file)
 else
   puts "[!] Please copy config/test.yml.example to config/test.yml and set your partner ID to run the remote tests."
   exit(-1)
+end
+
+module Kernel
+  def assert(expectation, message=nil)
+    if expectation
+      $stderr.write('.')
+    else
+      message ||= "assertion failed"
+      puts "FAILURE: #{caller(0)[1]}"
+      puts "  #{message}"
+      exit -1
+    end
+  end
 end

@@ -76,6 +76,14 @@ module Supreme
       paid == 'true'
     end
     
+    def status
+      test('//status')
+    end
+    
+    def message
+      test('//status')
+    end
+    
     def customer
       {
         'name' => text('//consumerName'),

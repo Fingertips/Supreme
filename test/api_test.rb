@@ -106,6 +106,7 @@ class Supreme::APITest < Test::Unit::TestCase
     assert_equal '123', status.amount
     assert_equal 'EUR', status.currency
     assert_equal 'true', status.paid
+    assert_equal 'Success', status.status
     assert_equal({
       'name' => 'Hr J Janssen',
       'account' => 'P001234567',
@@ -119,6 +120,7 @@ class Supreme::APITest < Test::Unit::TestCase
     FakeWeb.register_uri(:get, %r{^https://}, :body => FURTHER_CHECK_RESPONSE, :status => 200)
     status = @api.check(@check_options)
     assert_equal '', status.paid
+    assert_equal 'CheckedBefore', status.status
     assert !status.paid?
   end
   
@@ -166,6 +168,7 @@ CHECK_RESPONSE = %(<?xml version="1.0"?>
         <amount>123</amount>
         <currency>EUR</currency>
         <payed>true</payed>
+        <status>Success</status>
         <consumer>
             <consumerName>Hr J Janssen</consumerName>
             <consumerAccount>P001234567</consumerAccount>
@@ -181,12 +184,8 @@ FURTHER_CHECK_RESPONSE = %(<?xml version="1.0"?>
         <transaction_id>482d599bbcc7795727650330ad65fe9b</transaction_id>
         <amount>123</amount>
         <currency>EUR</currency>
-        <consumer>
-            <consumerName>Hr J Janssen</consumerName>
-            <consumerAccount>P001234567</consumerAccount>
-            <consumerCity>Amsterdam</consumerCity>
-        </consumer>
-        <message>This iDEAL-order has successfuly been payed for, and this is the first time you check it.</message>
+        <status>CheckedBefore</status>
+        <message>This iDEAL-order wasn't payed for, or was already checked by you. (We give payed=true only once, for your protection)</message>
     </order>
 </response>)
 
