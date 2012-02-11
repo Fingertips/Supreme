@@ -5,6 +5,7 @@ class Supreme::APITest < Test::Unit::TestCase
     FakeWeb.clean_registry
     
     @api = Supreme::API.new(
+      :mode => :test,
       :partner_id => '978234'
     )
     

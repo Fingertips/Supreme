@@ -7,13 +7,11 @@ class SupremeTest < Test::Unit::TestCase
   
   def test_uses_test_mode_by_default
     assert_equal :test, Supreme.mode
-    assert Supreme.test?
   end
   
   def test_holds_a_different_mode
     Supreme.mode = :live
     assert_equal :live, Supreme.mode
-    assert !Supreme.test?
   end
   
   def test_translate_hash_keys

@@ -11,7 +11,7 @@ end
 
 namespace :docs do
   Rake::RDocTask.new('generate') do |t|
-    t.main = "README.rdoc"
+    t.main = "lib/supreme.rb"
     t.rdoc_files.include("README.md", "lib/**/*.rb")
     t.options << '--charset=utf8'
   end

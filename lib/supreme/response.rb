@@ -16,6 +16,7 @@ module Supreme
     end
   end
   
+  # Response to a banklist request
   class Banklist < Response
     def to_a
       @response.get_elements('//bank').map do |issuer|
@@ -24,6 +25,7 @@ module Supreme
     end
   end
   
+  # Response to a fetch request
   class Transaction < Response
     def transaction_id
       text('//transaction_id')
@@ -38,6 +40,7 @@ module Supreme
     end
   end
   
+  # Response to a check request
   class Status < Response
     def transaction_id
       text('//transaction_id')
