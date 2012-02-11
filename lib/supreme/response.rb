@@ -72,16 +72,39 @@ module Supreme
       text('//payed')
     end
     
+    # A payment will return paid? for just one request. If you issue it too early you might never
+    # get a truthy value from this.
     def paid?
       paid == 'true'
     end
     
+    # Returns the status of the payment. This is probably the best way to check if the payment has
+    # succeeded. It returns one of the following values:
+    #
+    # * <tt>Open</tt> – Payment is still processing.
+    # * <tt>Success</tt> – The payment was successful.
+    # * <tt>Cancelled</tt> – The payment was explicitly cancelled by the customer.
+    # * <tt>Failure</tt> – The payment failed.
+    # * <tt>Expired</tt> – The customer abandoned the payment, we don't expect them to finish it.
+    # * <tt>CheckedBefore</tt> – You've requested the payment status before.
+    #
+    # You can also check the status of the payment with one of the boolean accessors: open?, success?,
+    # cancelled?, failed?, expired?, and checked_before?.
     def status
-      test('//status')
+      text('//status')
     end
     
-    def message
-      test('//status')
+    [
+      ['Open', :open?],
+      ['Success', :success?],
+      ['Cancelled', :cancelled?],
+      ['Failure', :failed?],
+      ['Expired', :expired?],
+      ['CheckedBefore', :checked_before?]
+    ].each do |expected, accessor|
+      define_method accessor do
+        status == expected
+      end
     end
     
     def customer

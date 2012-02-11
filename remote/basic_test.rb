@@ -18,20 +18,18 @@ assert(transaction.transaction_id.strip != '', "Expected the transaction_id to n
 puts
 puts "Open the following link and complete the transaction: "
 puts transaction.url.gsub('&amp;', '&')
+puts
 
-sleep 5
+puts "Waiting 20 seconds for you to complete the payment"
+20.times { $stdout.write('.'); sleep 1 }
+puts
 
 transaction_id = transaction.transaction_id
-20.times do
-  status = Supreme.api.check(:transaction_id => transaction_id)
-  
-  assert(1399 == status.amount.to_i, "Expected the status amount to be the same as the one we set (was #{status.amount})")
-  if status.paid?
-    puts "The transation was completed successfully!"
-    exit 1
-  else
-    puts "[…] Not paid yet"
-  end
-  
-  sleep 2
+status = Supreme.api.check(:transaction_id => transaction_id)
+assert(1399 == status.amount.to_i, "Expected the status amount to be the same as the one we set (was #{status.amount})")
+
+if status.success?
+  puts "The transation was completed successfully!"
+else
+  puts "The transation failed: #{status.status}"
 end

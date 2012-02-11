@@ -20,10 +20,11 @@ else
   exit(-1)
 end
 
+$stdout.sync = true
 module Kernel
   def assert(expectation, message=nil)
     if expectation
-      $stderr.write('.')
+      $stdout.write('.')
     else
       message ||= "assertion failed"
       puts "FAILURE: #{caller(0)[1]}"
