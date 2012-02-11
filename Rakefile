@@ -9,6 +9,15 @@ task :test do
   sh "ruby -Ilib -I. -r '#{files.join("' -r '")}' -e ''"
 end
 
+namespace :test do
+  desc "Run remote tests"
+  task :remote do
+    # Run the tests in random order
+    files = FileList['remote/**/*_test.rb']
+    sh "ruby -Ilib -I. -r '#{files.join("' -r '")}' -e ''"
+  end
+end
+
 namespace :docs do
   Rake::RDocTask.new('generate') do |t|
     t.main = "lib/supreme.rb"
