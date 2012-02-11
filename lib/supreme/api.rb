@@ -33,10 +33,10 @@ module Supreme
     end
     
     # Checks the status of the payment
-    def status(options)
+    def check(options)
       options = options.dup
       options[:partner_id] ||= partner_id
-      response = get('fetch', options)
+      response = get('check', options)
       if response.ok?
         Supreme::Status.new(response.body)
       end

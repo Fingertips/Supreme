@@ -16,7 +16,7 @@ class Supreme::APITest < Test::Unit::TestCase
       :report_url => 'http://example.com/payments/ad74hj23',
       :return_url => 'http://example.com/payments/ad74hj23/thanks'
     }
-    @status_options = {
+    @check_options = {
       :transaction_id => '482d599bbcc7795727650330ad65fe9b'
     }
   end
@@ -78,9 +78,9 @@ class Supreme::APITest < Test::Unit::TestCase
     assert_equal 'https://mijn.postbank.nl/internetbankieren/SesamLoginServlet?sessie=ideal&trxid=003123456789123&random=123456789abcdefgh', transaction.url
   end
   
-  def test_status_url
+  def test_check_url
     REST.stubs(:get).with(&@record_url).returns(stub(:ok? => false))
-    @api.status(@status_options)
+    @api.check(@check_options)
     uri = URI.parse(@url)
     assert_equal 'https', uri.scheme
     assert_equal 'secure.mollie.nl', uri.host
@@ -88,16 +88,16 @@ class Supreme::APITest < Test::Unit::TestCase
     
     parts = Hash[Supreme::URI.parse_query(uri.query)]
     assert_equal({
-      "a" => "fetch",
+      "a" => "check",
       "testmode" => "true",
       "partner_id" => "978234",
       "transaction_id" => "482d599bbcc7795727650330ad65fe9b"
     }, parts)
   end
   
-  def test_status
-    FakeWeb.register_uri(:get, %r{^https://}, :body => STATUS_RESPONSE, :status => 200)
-    status = @api.status(@status_options)
+  def test_check
+    FakeWeb.register_uri(:get, %r{^https://}, :body => CHECK_RESPONSE, :status => 200)
+    status = @api.check(@check_options)
     assert status.kind_of?(Supreme::Status)
     assert_equal '482d599bbcc7795727650330ad65fe9b', status.transaction_id
     assert_equal '123', status.amount
@@ -108,6 +108,14 @@ class Supreme::APITest < Test::Unit::TestCase
       'account' => 'P001234567',
       'city' => 'Amsterdam'
     }, status.customer)
+    assert status.paid?
+  end
+  
+  def test_further_status_responses
+    FakeWeb.register_uri(:get, %r{^https://}, :body => FURTHER_CHECK_RESPONSE, :status => 200)
+    status = @api.check(@check_options)
+    assert_equal '', status.paid
+    assert !status.paid?
   end
 end
 
@@ -139,13 +147,28 @@ FETCH_RESPONSE = %(<?xml version="1.0"?>
     </order>
 </response>)
 
-STATUS_RESPONSE = %(<?xml version="1.0"?>
+CHECK_RESPONSE = %(<?xml version="1.0"?>
 <response>
     <order>
         <transaction_id>482d599bbcc7795727650330ad65fe9b</transaction_id>
         <amount>123</amount>
         <currency>EUR</currency>
         <payed>true</payed>
+        <consumer>
+            <consumerName>Hr J Janssen</consumerName>
+            <consumerAccount>P001234567</consumerAccount>
+            <consumerCity>Amsterdam</consumerCity>
+        </consumer>
+        <message>This iDEAL-order has successfuly been payed for, and this is the first time you check it.</message>
+    </order>
+</response>)
+
+FURTHER_CHECK_RESPONSE = %(<?xml version="1.0"?>
+<response>
+    <order>
+        <transaction_id>482d599bbcc7795727650330ad65fe9b</transaction_id>
+        <amount>123</amount>
+        <currency>EUR</currency>
         <consumer>
             <consumerName>Hr J Janssen</consumerName>
             <consumerAccount>P001234567</consumerAccount>

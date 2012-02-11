@@ -55,6 +55,10 @@ module Supreme
       text('//payed')
     end
     
+    def paid?
+      paid == 'true'
+    end
+    
     def customer
       {
         'name' => text('//consumerName'),
