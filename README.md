@@ -4,11 +4,11 @@ A Ruby client that allows you to do iDEAL transactions through the [Mollie iDEAL
 
 ## Install
 
-$ gem install supreme
+    $ gem install supreme
 
 ## Payment flow
 
-You start by setting the mode of the library to either :test or :live. The default is :test, so
+You start by setting the mode of the library to either <tt>:test</tt> or <tt>:live</tt>. The default is <tt>:test</tt>, so
 for tests you don't have to change anything.
   
     Supreme.mode = :live
@@ -34,11 +34,11 @@ When the user has selected a bank, you start a transaction.
     )
     transaction.transaction_id #=> '482d599bbcc7795727650330ad65fe9b'
 
-Keep the transaction_id around for reference and redirect the customer to the indicated URL.
+Keep the <tt>transaction_id</tt> around for reference and redirect the customer to the indicated URL.
 
     Location: #{transaction.url}
 
-Once the transaction is done you will receive a GET on the report_url with a ‘transaction_id’ parameter
+Once the transaction is done you will receive a GET on the <tt>report_url</tt> with a <tt>transaction_id</tt> parameter
 to indicate that the transaction has changed state. You will need to check the status of the transaction.
   
     status = Supreme.api.check(
@@ -53,7 +53,7 @@ to indicate that the transaction has changed state. You will need to check the s
       # Update the local status of the payment
     end
 
-When the customer returns to your site it returns with its transaction_id attached to your provided URL.
+When the customer returns to your site it returns with its <tt>transaction_id</tt> attached to your provided URL.
 You can present a page depending on the status of the payment.
 
 ## Errors
@@ -63,7 +63,6 @@ When an error occurs you get a Supreme::Error object instead of the response obj
     status = Supreme.api.check(
       :transaction_id => '482d599bbcc7795727650330ad65fe9b'
     )
-    
     if status.error?
       log("#{status.message} (#{status.code})")
     end
