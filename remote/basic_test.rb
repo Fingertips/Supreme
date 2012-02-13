@@ -17,7 +17,7 @@ assert(transaction.transaction_id.strip != '', "Expected the transaction_id to n
 
 puts
 puts "Open the following link and complete the transaction: "
-puts transaction.url.gsub('&amp;', '&')
+puts transaction.url
 puts
 
 puts "Waiting 20 seconds for you to complete the payment"

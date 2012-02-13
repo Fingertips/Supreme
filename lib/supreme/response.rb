@@ -50,7 +50,8 @@ module Supreme
     end
     
     def url
-      text('//URL')
+      # For some reason REXML doesn't process the character entities in the XML
+      text('//URL').gsub('&amp;', '&')
     end
   end
   

@@ -88,7 +88,7 @@ class Supreme::APITest < Test::Unit::TestCase
     assert transaction.kind_of?(Supreme::Transaction)
     assert_equal '482d599bbcc7795727650330ad65fe9b', transaction.transaction_id
     assert_equal '123', transaction.amount
-    assert_equal 'https://mijn.postbank.nl/internetbankieren/SesamLoginServlet?sessie=ideal&amp;trxid=003123456789123&amp;random=123456789abcdefgh', transaction.url
+    assert_equal 'https://mijn.postbank.nl/internetbankieren/SesamLoginServlet?sessie=ideal&trxid=003123456789123&random=123456789abcdefgh', transaction.url
     assert !transaction.error?
   end
   

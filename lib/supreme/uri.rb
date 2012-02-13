@@ -19,7 +19,7 @@ module Supreme
       str = s.to_s
       if RUBY_VERSION < "1.9" && $KCODE =~ /u/i
         str.gsub(/([^ a-zA-Z0-9_.-]+)/) do
-          '%' + $1.unpack('H2' * Rack::Utils.bytesize($1)).join('%').upcase
+          '%' + $1.unpack('H2' * $1.length).join('%').upcase
         end.tr(' ', '+')
       else
         if TBLENCWWWCOMP_.empty?
